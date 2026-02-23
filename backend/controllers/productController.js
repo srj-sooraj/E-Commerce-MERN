@@ -26,12 +26,56 @@ export const addProduct = async (req, res) => {
 };
 
 // GET ALL PRODUCTS
-export const getProducts = async (req, res) => {
+// export const getProducts = async (req, res) => {
+//   try {
+//     const products = await Product.find();
+//     res.status(200).json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// };
+  export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    res.status(200).json(products);
+    const page = Number(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
+    const keyword = req.query.keyword
+      ? { name: { $regex: req.query.keyword, $options: "i" } }
+      : {};
+
+    const category = req.query.category
+      ? { category: req.query.category }
+      : {};
+
+    const sortOption = req.query.sort || "newest";
+
+    let sortBy = {};
+    if (sortOption === "low") sortBy = { price: 1 };
+    else if (sortOption === "high") sortBy = { price: -1 };
+    else sortBy = { createdAt: -1 };
+
+    const products = await Product.find({
+      ...keyword,
+      ...category,
+    })
+      .sort(sortBy)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Product.countDocuments({
+      ...keyword,
+      ...category,
+    });
+
+    res.json({
+      products,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 

@@ -99,7 +99,7 @@ function AdminDashboard() {
   const fetchProducts = async () => {
     try {
       const { data } = await API.get("/products");
-      setProducts(data);
+      setProducts(data.products);
     } catch (error) {
       console.log(error);
     }
@@ -205,7 +205,7 @@ function AdminDashboard() {
         <input placeholder="Price" value={price} onChange={(e)=>setPrice(e.target.value)} /><br/>
         <input placeholder="Description" value={description} onChange={(e)=>setDescription(e.target.value)} /><br/>
 
-        {/* ✅ FILE INPUT */}
+        {/*FILE INPUT */}
         <input type="file" onChange={(e)=>setImageFile(e.target.files[0])} /><br/>
 
         <input placeholder="Category" value={category} onChange={(e)=>setCategory(e.target.value)} /><br/>
@@ -222,7 +222,7 @@ function AdminDashboard() {
           <h4>{product.name}</h4>
           <p>₹{product.price}</p>
 
-          {/* ✅ Show Image */}
+          {/* Show Image */}
           {product.image && (
             <img
               src={`http://localhost:3000/${product.image}`}
