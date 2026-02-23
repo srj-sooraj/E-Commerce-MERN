@@ -109,50 +109,92 @@ function AdminDashboard() {
     fetchProducts();
   }, []);
 
+  // const addProduct = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("name", name);
+  //     formData.append("price", price);
+  //     formData.append("description", description);
+  //     formData.append("category", category);
+  //     formData.append("stock", stock);
+  //     formData.append("image", imageFile);
+
+  //     await API.post("/products", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     toast.success("Product Added Successfully");
+  //     fetchProducts();
+
+  //     // reset form
+  //     setName("");
+  //     setPrice("");
+  //     setDescription("");
+  //     setCategory("");
+  //     setStock("");
+  //     setImageFile(null);
+
+  //   } catch (error) {
+  //     toast.error("Only Admin can add product");
+  //   }
+  // };
+
   const addProduct = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("price", price);
-      formData.append("description", description);
-      formData.append("category", category);
-      formData.append("stock", stock);
-      formData.append("image", imageFile);
+  try {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("category", category);
+    formData.append("stock", stock);
+    formData.append("image", imageFile);
 
-      await API.post("/products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    await API.post("/products", formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      toast.success("Product Added Successfully");
-      fetchProducts();
+    toast.success("Product Added Successfully");
+    fetchProducts();
 
-      // reset form
-      setName("");
-      setPrice("");
-      setDescription("");
-      setCategory("");
-      setStock("");
-      setImageFile(null);
-
-    } catch (error) {
-      toast.error("Only Admin can add product");
-    }
+  } catch (error) {
+    toast.error("Only Admin can add product");
+  }
   };
 
-  const deleteProduct = async (id) => {
-    try {
-      await API.delete(`/products/${id}`);
-      toast.success("Product Deleted");
-      fetchProducts();
-    } catch (error) {
-      toast.error("Delete failed");
-    }
-  };
+  // const deleteProduct = async (id) => {
+  //   try {
+  //     await API.delete(`/products/${id}`);
+  //     toast.success("Product Deleted");
+  //     fetchProducts();
+  //   } catch (error) {
+  //     toast.error("Delete failed");
+  //   }
+  // };
 
+    const deleteProduct = async (id) => {
+  try {
+    await API.delete(`/products/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    toast.success("Product Deleted");
+    fetchProducts();
+
+  } catch (error) {
+    toast.error("Delete failed");
+  }
+};
   return (
     <div style={{ padding: "20px" }}>
       <h2>Admin Dashboard</h2>

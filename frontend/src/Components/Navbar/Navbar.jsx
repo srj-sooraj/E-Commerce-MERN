@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router";
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
     navigate("/login");
   };
 
@@ -21,6 +23,7 @@ const Navbar = () => {
 
         {/* Links */}
         <div className="flex items-center gap-8 text-slate-300 font-medium">
+
           <Link
             to="/"
             className="hover:text-cyan-400 transition relative group"
@@ -45,6 +48,17 @@ const Navbar = () => {
             <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-cyan-400 transition-all group-hover:w-full"></span>
           </Link>
 
+          {/* ✅ ADMIN LINK ADDED HERE */}
+          {userInfo?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="hover:text-cyan-400 transition relative group"
+            >
+              Admin
+              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-cyan-400 transition-all group-hover:w-full"></span>
+            </Link>
+          )}
+
           {token ? (
             <button
               onClick={handleLogout}
@@ -60,6 +74,7 @@ const Navbar = () => {
               Login
             </Link>
           )}
+
         </div>
       </div>
     </nav>
