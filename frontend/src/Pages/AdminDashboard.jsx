@@ -196,47 +196,114 @@ function AdminDashboard() {
   }
 };
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Admin Dashboard</h2>
+  <div className="min-h-screen bg-slate-900 p-8">
+    <h2 className="text-3xl font-bold mb-8 text-center">
+      Admin Dashboard
+    </h2>
 
-      <h3>Add Product</h3>
-      <form onSubmit={addProduct}>
-        <input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} /><br/>
-        <input placeholder="Price" value={price} onChange={(e)=>setPrice(e.target.value)} /><br/>
-        <input placeholder="Description" value={description} onChange={(e)=>setDescription(e.target.value)} /><br/>
+    {/* Add Product Card */}
+    <div className="bg-black shadow-xl rounded-2xl p-6 max-w-3xl mx-auto mb-12">
+      <h3 className="text-xl font-semibold mb-4">Add New Product</h3>
 
-        {/*FILE INPUT */}
-        <input type="file" onChange={(e)=>setImageFile(e.target.files[0])} /><br/>
+      <form onSubmit={addProduct} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
 
-        <input placeholder="Category" value={category} onChange={(e)=>setCategory(e.target.value)} /><br/>
-        <input placeholder="Stock" value={stock} onChange={(e)=>setStock(e.target.value)} /><br/>
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
 
-        <button type="submit">Add</button>
+        <textarea
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border rounded-lg p-3 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
+        <input
+          type="file"
+          onChange={(e) => setImageFile(e.target.files[0])}
+          className="w-full"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
+        <input
+          type="number"
+          placeholder="Stock"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+          className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-black font-semibold py-3 rounded-lg transition duration-300"
+        >
+          Add Product
+        </button>
       </form>
+    </div>
 
-      <hr />
+    {/* Products Section */}
+    <h3 className="text-2xl font-semibold mb-6">All Products</h3>
 
-      <h3>All Products</h3>
-      {products.map((product) => (
-        <div key={product._id} style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}>
-          <h4>{product.name}</h4>
-          <p>₹{product.price}</p>
-
-          {/* Show Image */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {products?.map((product) => (
+        <div
+          key={product._id}
+          className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
+        >
           {product.image && (
             <img
               src={`http://localhost:3000/${product.image}`}
               alt={product.name}
-              width="120"
+              className="w-full h-48 object-cover"
             />
           )}
 
-          <br />
-          <button onClick={() => deleteProduct(product._id)}>Delete</button>
+          <div className="p-4">
+            <h4 className="font-semibold text-lg mb-2 truncate">
+              {product.name}
+            </h4>
+
+            <p className="text-green-600 font-bold text-lg">
+              ₹{product.price}
+            </p>
+
+            <button
+              onClick={() => deleteProduct(product._id)}
+              className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition duration-300"
+            >
+              Delete
+            </button>
+          </div>
         </div>
       ))}
     </div>
-  );
+  </div>
+);
 }
 
 export default AdminDashboard;

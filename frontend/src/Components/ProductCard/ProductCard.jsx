@@ -40,11 +40,22 @@ const ProductCard = ({ product }) => {
       );
     }
   };
+  const handleWishlist = async (e) => {
+  e.stopPropagation();
+
+  try {
+    const res = await API.post(`/products/wishlist/${product._id}`);
+    toast.success(res.data.message);
+  } catch (error) {
+    toast.error("Login required");
+  }
+};
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-2 transition duration-300">
+    <div  className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-2 transition duration-300">
       
       <img
+        onClick={() => navigate(`/product/${product._id}`)}
         src={`http://localhost:3000/${product.image}`}
         alt={product.name}
         className="w-full h-60 object-cover"
@@ -63,7 +74,12 @@ const ProductCard = ({ product }) => {
           <span className="text-cyan-400 font-bold text-xl">
             ₹{product.price}
           </span>
-
+          <button
+            onClick={handleWishlist}
+            className="text-red-500 text-xl"
+          >
+            ♥
+          </button>
           {inCart ? (
             <button
               onClick={() => navigate("/cart")}
@@ -72,12 +88,14 @@ const ProductCard = ({ product }) => {
               Go To Cart
             </button>
           ) : (
+            
             <button
               onClick={handleAddToCart}
               className="bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2 rounded-lg text-black font-semibold hover:scale-105 transition"
             >
               Add
             </button>
+            
           )}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import Product from "../models/product.js";
+import User from "../models/User.js";
 
 // ADD PRODUCT (Admin)
 export const addProduct = async (req, res) => {
@@ -137,5 +138,77 @@ export const deleteProduct = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+
+export const createReview = async (req, res) => {
+  const { rating, comment } = req.body;
+
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  const alreadyReviewed = product.reviews.find(
+    (r) => r.user.toString() === req.user._id.toString()
+  );
+
+  if (alreadyReviewed) {
+    return res.status(400).json({ message: "Already reviewed" });
+  }
+
+  const review = {
+    user: req.user._id,
+    name: req.user.name,
+    rating: Number(rating),
+    comment,
+  };
+
+  product.reviews.push(review);
+  product.numReviews = product.reviews.length;
+
+  product.rating =
+    product.reviews.reduce((acc, item) => acc + item.rating, 0) /
+    product.reviews.length;
+
+  await product.save();
+
+  res.status(201).json({ message: "Review added" });
+};
+
+export const toggleWishlist = async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  const productId = req.params.id;
+
+  const exists = user.wishlist.includes(productId);
+
+  if (exists) {
+    user.wishlist = user.wishlist.filter(
+      (id) => id.toString() !== productId
+    );
+  } else {
+    user.wishlist.push(productId);
+  }
+
+  await user.save();
+
+  res.json({ message: "Wishlist updated" });
+};
+
+export const getWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .populate("wishlist");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user.wishlist);
+  } catch (error) {
+    console.log(error); // 👈 check terminal
+    res.status(500).json({ message: "Server error" });
   }
 };

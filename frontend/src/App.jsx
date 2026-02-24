@@ -12,6 +12,8 @@ import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute.jsx";
 import AdminRoute from "./Pages/AdminRoute.jsx";
 import Footer from "./Components/Footer/Footer.jsx";
 import { Toaster } from "react-hot-toast";
+import ProductDetails from "./Pages/ProductDetail.jsx";
+import Wishlist from "./Pages/Whishlist.jsx";
 
 function App() {
   return (
@@ -24,8 +26,10 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Product />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/wishlist" element={<Wishlist />} />
 
           {/* Protected User Routes */}
           <Route

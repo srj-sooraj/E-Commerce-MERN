@@ -39,7 +39,9 @@ const Navbar = () => {
             Cart
             <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-cyan-400 transition-all group-hover:w-full"></span>
           </Link>
-
+          <button onClick={() => navigate("/wishlist")}>
+            Wishlist
+          </button>
           <Link
             to="/orders"
             className="hover:text-cyan-400 transition relative group"
