@@ -10,6 +10,7 @@ import productRoutes from "./routes/productRoutes.js"
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js"
 import profileRoutes from "./routes/profileRoutes.js"
+import paymentRoutes from "./routes/paymentRoutes.js"
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -27,6 +28,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Ecommerce API is running...");

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import API from "../../Services/api";
 import toast from "react-hot-toast";
+import { ShoppingBag, ShoppingCart, Heart, Star } from "lucide-react";
 
 const ProductCard = ({ product }) => {
   const [inCart, setInCart] = useState(false);
@@ -22,104 +23,112 @@ const ProductCard = ({ product }) => {
   };
 
   const checkWishlist = async () => {
-  try {
-    const res = await API.get("/products/wishlist");
+    try {
+      const res = await API.get("/products/wishlist");
+      const exists = res.data.some((item) => item._id === product._id);
+      setWishlisted(exists);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const exists = res.data.some(
-      (item) => item._id === product._id
-    );
-
-    setWishlisted(exists);
-  } catch (error) {
-    console.log(error);
-  }
-};
   useEffect(() => {
-    checkCart(),
+    checkCart();
     checkWishlist();
   }, []);
 
-  
   const handleAddToCart = async () => {
     try {
-      await API.post("/cart", {
-        productId: product._id,
-        quantity: 1,
+      await API.post("/cart", { productId: product._id, quantity: 1 });
+      toast.success("Added to cart", {
+        style: { borderRadius: '10px', background: '#0f172a', color: '#fff', border: '1px solid #1e293b' },
       });
-
-      toast.success("Added to cart");
       setInCart(true);
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Login required"
-      );
+      toast.error(error.response?.data?.message || "Login required");
     }
   };
+
   const handleWishlist = async (e) => {
-  e.stopPropagation();
-
-  try {
-    const res = await API.post(`/products/wishlist/${product._id}`);
-
-    toast.success(res.data.message);
-
-    setWishlisted(!wishlisted);
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Login required");
-  }
+    e.stopPropagation();
+    try {
+      const res = await API.post(`/products/wishlist/${product._id}`);
+      toast.success(res.data.message, {
+        style: { borderRadius: '10px', background: '#0f172a', color: '#fff', border: '1px solid #1e293b' },
+      });
+      setWishlisted(!wishlisted);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login required");
+    }
   };
+
   return (
-    <div  className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-2 transition duration-300">
-      
-      <div className="relative">
+    <div className="group relative bg-slate-900/40 backdrop-blur-sm border border-slate-800 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-500">
 
-  <img
-    onClick={() => navigate(`/product/${product._id}`)}
-    src={`http://localhost:3000/${product.images?.[0] || product.image}`}
-    alt={product.name}
-    className="w-full h-60 object-cover cursor-pointer"
-  />
+      <div className="relative overflow-hidden aspect-[4/3] bg-slate-800">
+        <img
+          onClick={() => navigate(`/product/${product._id}`)}
+          src={`http://localhost:3000/${product.images?.[0] || product.image}`}
+          alt={product.name}
+          className="w-full h-full object-cover cursor-pointer transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+        />
 
-  {/* Wishlist button */}
-  <button
-    onClick={handleWishlist}
-    className="absolute top-3 right-3 text-2xl bg-white/80 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center hover:scale-110 transition"
-  >
-    {wishlisted ? "❤️" : "🤍"}
-  </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-</div>
-      
+        {/* Wishlist button */}
+        <button
+          onClick={handleWishlist}
+          className={`absolute top-4 right-4 p-3 rounded-full backdrop-blur-md transition-all duration-300 z-10 ${wishlisted
+              ? "bg-red-500/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+              : "bg-slate-900/60 text-white border border-white/10 hover:bg-white/20"
+            }`}
+        >
+          <Heart size={20} className={wishlisted ? "fill-current" : ""} />
+        </button>
+
+        {/* Rating badge */}
+        <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5 flex items-center gap-1.5 z-10">
+          <Star size={14} className="text-yellow-400 fill-yellow-400" />
+          <span className="text-xs font-bold text-white">4.8</span>
+        </div>
+      </div>
+
       <div className="p-6">
-        <h3 className="text-lg font-semibold mb-2">
-          {product.name}
-        </h3>
+        <div className="flex justify-between items-start mb-2">
+          <h3
+            onClick={() => navigate(`/product/${product._id}`)}
+            className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors cursor-pointer line-clamp-1"
+          >
+            {product.name}
+          </h3>
+        </div>
 
-        <p className="text-slate-400 text-sm mb-4">
+        <p className="text-slate-400 text-sm mb-6 line-clamp-2 min-h-[40px]">
           {product.description}
         </p>
 
-        <div className="flex justify-between items-center">
-          <span className="text-cyan-400 font-bold text-xl">
-            ₹{product.price}
-          </span>
-          
+        <div className="flex justify-between items-center mt-auto border-t border-slate-800/50 pt-5">
+          <div className="flex flex-col">
+            <span className="text-xs text-slate-500 font-semibold tracking-wider uppercase mb-1">Price</span>
+            <span className="text-emerald-400 font-extrabold text-2xl tracking-tight">
+              ₹{product.price}
+            </span>
+          </div>
+
           {inCart ? (
             <button
               onClick={() => navigate("/cart")}
-              className="bg-green-500 px-4 py-2 rounded-lg text-black font-semibold hover:scale-105 transition"
+              className="bg-slate-800 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-700 transition duration-300 border border-slate-700 shadow-lg"
             >
-              Go To Cart
+              <ShoppingBag size={18} /> Cart
             </button>
           ) : (
-            
             <button
               onClick={handleAddToCart}
-              className="bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2 rounded-lg text-black font-semibold hover:scale-105 transition"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transform active:scale-95"
             >
-              Add
+              <ShoppingCart size={18} /> Add
             </button>
-            
           )}
         </div>
       </div>
