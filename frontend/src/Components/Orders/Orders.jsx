@@ -29,12 +29,12 @@ const Orders = () => {
             <p>Status: {order.orderStatus}</p>
             <p>Total: ₹{order.totalAmount}</p>
             <ul>
-              {order.items.map((item) => (
-                <li key={item.product._id}>
-                  {item.product.name} x {item.quantity}
-                </li>
-              ))}
-            </ul>
+              {order.items.map((item, index) => (
+                  <li key={index}>
+                    {item.name} x {item.quantity}
+                  </li>
+                ))}
+              </ul>
           </div>
         ))
       )}

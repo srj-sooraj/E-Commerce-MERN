@@ -56,3 +56,113 @@ function App() {
 }
 
 export default App;
+
+
+import React, { useState ,useEffect} from "react";
+import { Link, useNavigate } from "react-router";
+
+const Navbar = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const [open, setOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(
+  JSON.parse(localStorage.getItem("userInfo")));
+  
+  useEffect(() => {
+  const handleUserUpdate = () => {
+    const updatedUser = JSON.parse(localStorage.getItem("userInfo"));
+    setUserInfo(updatedUser);
+  };
+
+  window.addEventListener("userUpdated", handleUserUpdate);
+
+  return () => {
+    window.removeEventListener("userUpdated", handleUserUpdate);
+  };
+}, []);
+  const handleLogout = () => {
+ 
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    navigate("/login");
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 backdrop-blur-lg bg-slate-900/80 border-b border-slate-800 shadow-lg">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+        {/* Logo */}
+        <h1
+          onClick={() => navigate("/")}
+          className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent cursor-pointer"
+        >
+          ShopX
+        </h1>
+
+        {/* Links */}
+        <div className="flex items-center gap-8 text-slate-300 font-medium">
+
+          <Link to="/" className="hover:text-cyan-400 transition">Products</Link>
+          <Link to="/cart" className="hover:text-cyan-400 transition">Cart</Link>
+          <Link to="/wishlist" className="hover:text-cyan-400 transition">Wishlist</Link>
+          <Link to="/orders" className="hover:text-cyan-400 transition">Orders</Link>
+
+          {userInfo?.role === "admin" && (
+            <Link to="/admin" className="hover:text-cyan-400 transition">
+              Admin
+            </Link>
+          )}
+
+          {/* 🔥 Profile Section */}
+          {token ? (
+            <div className="relative">
+
+              {/* Profile Image */}
+              <img
+                src={
+                  userInfo?.profilePic
+                    ? `http://localhost:3000${userInfo.profilePic}`
+                    : "../images/am-a-19-year-old-multimedia-artist-student-from-manila--21.png"
+                }
+                alt="profile"
+                onClick={() => setOpen(!open)}
+                className="w-10 h-10 rounded-full cursor-pointer border-2 border-cyan-400 hover:scale-110 transition"
+              />
+
+              {/* Dropdown */}
+              {open && (
+                <div className="absolute right-0 mt-3 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-2">
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setOpen(false)}
+                    className="block px-4 py-2 hover:bg-slate-700 rounded text-slate-200"
+                  >
+                    My Account
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 hover:bg-slate-700 rounded text-red-400"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2 rounded-lg text-black font-semibold hover:scale-105 transition"
+            >
+              Login
+            </Link>
+          )}
+           
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

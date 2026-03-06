@@ -14,6 +14,13 @@ import Footer from "./Components/Footer/Footer.jsx";
 import { Toaster } from "react-hot-toast";
 import ProductDetails from "./Pages/ProductDetail.jsx";
 import Wishlist from "./Pages/Whishlist.jsx";
+import Checkout from "./Pages/Checkout.jsx";
+import AdminOrders from "./Components/AdminOrders/AdminOrders.jsx";
+import Profile from "./Pages/Profile.jsx";
+import Verify from "./Pages/verify.jsx";
+import ForgotPassword from "./Pages/forgotPassword.jsx";
+import ResetPassword from "./Pages/resetPassword.jsx";
+import VerifyResetOtp from "./Pages/verifyResetOtp.jsx";
 
 function App() {
   return (
@@ -30,7 +37,12 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/wishlist" element={<Wishlist />} />
-
+          <Route path="/checkout" element={<ProtectedRoute><Checkout/></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
           {/* Protected User Routes */}
           <Route
             path="/cart"
@@ -56,6 +68,14 @@ function App() {
             element={
               <AdminRoute>
                 <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminRoute>
+                <AdminOrders />
               </AdminRoute>
             }
           />

@@ -55,8 +55,10 @@ export const getCart = async (req, res) => {
     }
 
     const totalAmount = cart.items.reduce((acc, item) => {
+      if (!item.product) return acc; 
       return acc + item.product.price * item.quantity;
     }, 0);
+    cart.items = cart.items.filter(item => item.product !== null);
 
     res.status(200).json({
       items: cart.items,

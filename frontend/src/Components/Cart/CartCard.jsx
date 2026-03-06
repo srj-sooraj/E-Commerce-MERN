@@ -6,10 +6,11 @@ const CartCard = ({ item, updateQuantity, removeItem, loading }) => {
 
       <div className="flex items-center gap-6 w-full md:w-auto">
         <img
-        
-          src={`http://localhost:3000/${item.product.image}`}
+          src={`http://localhost:3000/${
+            item.product.images?.[0] || item.product.image
+          }`}
           alt={item.product.name}
-          className="w-28 h-28 object-cover rounded-xl"
+          className="w-24 h-24 object-cover rounded"
         />
         <div>
           <h3 className="text-lg font-semibold">{item.product.name}</h3>

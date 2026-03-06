@@ -4,16 +4,17 @@ import User from "../models/User.js";
 // ADD PRODUCT (Admin)
 export const addProduct = async (req, res) => {
   try {
-    const { name, description, price, image, category, stock } = req.body;
+    const { name, description, price, category, stock } = req.body;
+
+    const images = req.files.map(file => `uploads/${file.filename}`);
 
     const product = await Product.create({
       name,
       description,
       price,
-      image,
       category,
       stock,
-      image: `uploads/${req.file.filename}`
+      images
     });
 
     res.status(201).json({
@@ -105,22 +106,27 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    product.name = req.body.name || product.name;
+    product.price = req.body.price || product.price;
+    product.description = req.body.description || product.description;
+    product.category = req.body.category || product.category;
+    product.stock = req.body.stock || product.stock;
+
+    if (req.files && req.files.length > 0) {
+      product.images = req.files.map(file => `uploads/${file.filename}`);
+    }
+
+    await product.save();
 
     res.status(200).json({
       message: "Product updated successfully",
-      updatedProduct
+      product
     });
 
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 // DELETE PRODUCT (Admin)
 export const deleteProduct = async (req, res) => {
   try {
@@ -166,17 +172,17 @@ export const createReview = async (req, res) => {
   };
 
   product.reviews.push(review);
+
   product.numReviews = product.reviews.length;
 
   product.rating =
-    product.reviews.reduce((acc, item) => acc + item.rating, 0) /
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
     product.reviews.length;
 
   await product.save();
 
   res.status(201).json({ message: "Review added" });
 };
-
 export const toggleWishlist = async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -208,7 +214,7 @@ export const getWishlist = async (req, res) => {
 
     res.json(user.wishlist);
   } catch (error) {
-    console.log(error); // 👈 check terminal
+    console.log(error); 
     res.status(500).json({ message: "Server error" });
   }
 };

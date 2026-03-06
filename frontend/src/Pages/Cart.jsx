@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import API from "../Services/api.js";
 import CartCard from "../Components/Cart/CartCard.jsx";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
   const [cart, setCart] = useState({ items: [], totalAmount: 0 });
   const [loadingId, setLoadingId] = useState(null);
   const [placingOrder, setPlacingOrder] = useState(false);
+  const navigate = useNavigate();
 
   const fetchCart = async () => {
     try {
@@ -53,18 +55,18 @@ const Cart = () => {
     }
   };
 
-  const placeOrder = async () => {
-    try {
-      setPlacingOrder(true);
-      const res = await API.post("/orders");
-      toast.success(res.data.message);
-      fetchCart();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Order failed");
-    } finally {
-      setPlacingOrder(false);
-    }
-  };
+  // const placeOrder = async () => {
+  //   try {
+  //     setPlacingOrder(true);
+  //     const res = await API.post("/orders");
+  //     toast.success(res.data.message);
+  //     fetchCart();
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Order failed");
+  //   } finally {
+  //     setPlacingOrder(false);
+  //   }
+  // };
 
   useEffect(() => {
     fetchCart();
@@ -99,12 +101,18 @@ const Cart = () => {
           </div>
 
           <div className="text-center mt-6">
-            <button
+            {/* <button
               onClick={placeOrder}
               disabled={placingOrder}
               className="bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-3 rounded-xl text-black font-bold hover:scale-105 transition disabled:opacity-50"
             >
               {placingOrder ? "Processing..." : "Place Order"}
+            </button> */}
+            <button
+              onClick={() => navigate("/checkout")}
+              className="bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-3 rounded-xl text-black font-bold hover:scale-105 transition"
+            >
+              Proceed to Checkout
             </button>
           </div>
 

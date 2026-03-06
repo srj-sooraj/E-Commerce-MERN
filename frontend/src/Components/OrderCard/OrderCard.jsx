@@ -17,21 +17,29 @@ const OrderCard = ({ order }) => {
       </div>
 
       <div className="space-y-2">
-        {order.items.map((item) => (
-          <div key={item.product._id} className="flex justify-between">
-            <span>
-              {item.product.name} x {item.quantity}
-            </span>
-            <span>
-              ₹{item.product.price * item.quantity}
-            </span>
-            <img
-              src={`http://localhost:3000/${item.product.image}`}
-              alt={item.product.name}
-              className="w-16 h-16 object-cover rounded-lg"
-            />
-          </div>
-        ))}
+        {order.items.map((item, index) => {
+  if (!item.product) return null; // ✅ Prevent crash
+
+  return (
+    <div key={index} className="flex justify-between">
+      <span>
+        {item.name} x {item.quantity}
+      </span>
+
+      <span>
+        ₹{item.price * item.quantity}
+      </span>
+
+      <img
+        src={`http://localhost:3000/${
+          item.product.images?.[0] || item.product.image
+        }`}
+        alt={item.product.name}
+        className="w-24 h-24 object-cover rounded"
+      />
+    </div>
+  );
+})}
       </div>
 
     </div>

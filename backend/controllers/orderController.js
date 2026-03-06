@@ -1,32 +1,71 @@
 import Order from "../models/order.js";
 import Cart from "../models/cart.js";
+import Product from "../models/product.js";
 
 // CREATE ORDER (Dummy Payment) - already exists
+
+
 export const createOrder = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user._id }).populate("items.product");
+    const { shippingAddress } = req.body;
 
-    if (!cart || cart.items.length === 0) {
+    const cart = await Cart.findOne({ user: req.user._id })
+      .populate("items.product");
+
+    if (!cart) {
+      return res.status(400).json({ message: "Cart not found" });
+    }
+
+    // ✅ Remove deleted products automatically
+    cart.items = cart.items.filter(item => item.product !== null);
+    await cart.save();
+
+    if (cart.items.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    const totalAmount = cart.items.reduce((acc, item) => {
-      return acc + item.product.price * item.quantity;
-    }, 0);
+    let totalAmount = 0;
+    const orderItems = [];
+
+    for (let item of cart.items) {
+      const product = item.product;
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `${product.name} is out of stock`
+        });
+      }
+
+      // Deduct stock
+      product.stock -= item.quantity;
+      await product.save();
+
+      totalAmount += product.price * item.quantity;
+
+      orderItems.push({
+        product: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: item.quantity
+      });
+    }
 
     const order = await Order.create({
       user: req.user._id,
-      items: cart.items,
+      items: orderItems,
+      shippingAddress,
       totalAmount,
-      paymentStatus: "Completed" // Dummy payment
+      paymentStatus: "Pending"
     });
 
+    // Clear cart
     cart.items = [];
     await cart.save();
 
     res.status(201).json({
-      message: "Order placed successfully (Dummy Payment)",
-      order
+      message: "Order placed successfully",
+      _id: order._id
     });
 
   } catch (error) {
@@ -57,19 +96,23 @@ export const getAllOrders = async (req, res) => {
 // ✅ NEW: ADMIN UPDATE ORDER STATUS
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { status } = req.body; // "Processing", "Completed", "Cancelled"
+    const { orderStatus } = req.body; // ✅ FIXED
+
     const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
 
-    if (!order) return res.status(404).json({ message: "Order not found" });
-
-    order.orderStatus = status || order.orderStatus;
+    order.orderStatus = orderStatus; // ✅ direct assign
     await order.save();
 
     res.status(200).json({
       message: "Order status updated successfully",
       order
     });
+
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };

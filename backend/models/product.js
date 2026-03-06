@@ -14,10 +14,12 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    image: {
-      type: String,
-      required: true
-    },
+    images: [
+      {
+        type: String,
+        require:true
+      }
+    ],
     category: {
       type: String,
       required: true
