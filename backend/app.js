@@ -30,6 +30,13 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/payment", paymentRoutes);
 
+//server frontend
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
 app.get("/", (req, res) => {
   res.send("Ecommerce API is running...");
 });
