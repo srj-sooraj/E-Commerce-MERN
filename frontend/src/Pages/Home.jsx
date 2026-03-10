@@ -120,14 +120,14 @@ const Home = () => {
                         </div>
 
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
-                            Future of <br />
+                            Smart Shopping <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">
-                                E-Commerce.
+                                Start Here.
                             </span>
                         </h1>
 
                         <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
-                            Step into the next generation of online shopping. Experience incredible 3D product previews, rapid delivery, and truly unbeatable performance.
+                            Enjoy a smooth and effortless shopping experience with a wide range of quality products.Shop smarter with easy browsing , secure payment and get your favorite items delivered right to your doorstep
                         </p>
 
                         <div className="flex flex-wrap items-center gap-4">

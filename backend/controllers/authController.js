@@ -3,13 +3,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import sendEmail from "../utils/sendEmail.js";
 
-// REGISTER
+////// REGISTER
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
     const existingUser = await User.findOne({ email });
-
     if (existingUser && existingUser.isVerified) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -31,7 +29,6 @@ export const registerUser = async (req, res) => {
     });
 
     await sendEmail(email, "Verify your account", `Your OTP is: ${otp}`);
-
     res.status(200).json({ message: "OTP sent to email" });
 
   } catch (error) {
@@ -41,11 +38,8 @@ export const registerUser = async (req, res) => {
 };
 
 export const verifyOtp = async (req, res) => {
-  const { otp } = req.body;
-  
+  const { otp } = req.body; 
   const user = await User.findOne({ otp });
-  
-
   if (!user) {
     return res.status(400).json({ message: "Invalid OTP" });
   }
@@ -57,12 +51,14 @@ export const verifyOtp = async (req, res) => {
   res.json({ message: "Account verified successfully" });
 };
 
-// LOGIN
+///////// LOGIN
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // check if user exists
+
+
+    ////// check user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -72,13 +68,15 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Please verify your email first" });
     }
 
-    // compare password
+
+
+    //// compare password /checking password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // create token
+    ////// create token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -103,32 +101,29 @@ export const loginUser = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: "User not found" });
-
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
+  console.log(otp);
+  
   user.otp = otp;
   user.otpExpiry = Date.now() + 10 * 60 * 1000;
+  console.log(otp);
+  
 
   await user.save();
-
   await sendEmail(email, "Reset Password OTP", `Your OTP is: ${otp}`);
-
   res.json({ message: "OTP sent to email" });
 };
 
 export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
-
   const user = await User.findOne({ email });
 
   if (!user) {
     return res.status(400).json({ message: "User not found" });
   }
 
-  // ✅ Convert both to string and trim
   if (
     String(user.otp).trim() !== String(otp).trim() ||
     user.otpExpiry < Date.now()
@@ -147,19 +142,20 @@ export const resetPassword = async (req, res) => {
 
 export const verifyResetOtp = async (req, res) => {
   const { email, otp } = req.body;
-
   const user = await User.findOne({ email });
-
+  
+  
+  
   if (!user) {
     return res.status(400).json({ message: "User not found" });
   }
-
+  
   if (
     String(user.otp).trim() !== String(otp).trim() ||
     user.otpExpiry < Date.now()
   ) {
     return res.status(400).json({ message: "Invalid or expired OTP" });
   }
-
+  
   res.json({ message: "OTP verified successfully" });
 };

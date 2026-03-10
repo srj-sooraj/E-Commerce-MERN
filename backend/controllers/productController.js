@@ -1,12 +1,12 @@
 import Product from "../models/product.js";
 import User from "../models/User.js";
 
-// ADD PRODUCT (Admin)
+//product add(Admin)
 export const addProduct = async (req, res) => {
   try {
     const { name, description, price, category, stock } = req.body;
-
     const images = req.files.map(file => `uploads/${file.filename}`);
+
 
     const product = await Product.create({
       name,
@@ -16,13 +16,11 @@ export const addProduct = async (req, res) => {
       stock,
       images
     });
-
-    res.status(201).json({
+ res.status(201).json({
       message: "Product added successfully",
       product
     });
-
-  } catch (error) {
+ }catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 };
@@ -81,23 +79,20 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// GET SINGLE PRODUCT
+//single product get
 export const getSingleProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     res.status(200).json(product);
-
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 };
 
-// UPDATE PRODUCT (Admin)
+//product update(Admin)
 export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -106,19 +101,21 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+
     product.name = req.body.name || product.name;
     product.price = req.body.price || product.price;
     product.description = req.body.description || product.description;
     product.category = req.body.category || product.category;
     product.stock = req.body.stock || product.stock;
 
+
+
+
     if (req.files && req.files.length > 0) {
       product.images = req.files.map(file => `uploads/${file.filename}`);
     }
-
-    await product.save();
-
-    res.status(200).json({
+   await product.save();
+   res.status(200).json({
       message: "Product updated successfully",
       product
     });
@@ -127,7 +124,7 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-// DELETE PRODUCT (Admin)
+//product delete(Admin)
 export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -137,7 +134,6 @@ export const deleteProduct = async (req, res) => {
     }
 
     await product.deleteOne();
-
     res.status(200).json({
       message: "Product deleted successfully"
     });
@@ -149,13 +145,11 @@ export const deleteProduct = async (req, res) => {
 
 export const createReview = async (req, res) => {
   const { rating, comment } = req.body;
-
   const product = await Product.findById(req.params.id);
 
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
-
   const alreadyReviewed = product.reviews.find(
     (r) => r.user.toString() === req.user._id.toString()
   );
@@ -172,22 +166,17 @@ export const createReview = async (req, res) => {
   };
 
   product.reviews.push(review);
-
   product.numReviews = product.reviews.length;
-
   product.rating =
     product.reviews.reduce((acc, item) => item.rating + acc, 0) /
     product.reviews.length;
 
   await product.save();
-
   res.status(201).json({ message: "Review added" });
 };
 export const toggleWishlist = async (req, res) => {
   const user = await User.findById(req.user._id);
-
   const productId = req.params.id;
-
   const exists = user.wishlist.includes(productId);
 
   if (exists) {
@@ -197,7 +186,6 @@ export const toggleWishlist = async (req, res) => {
   } else {
     user.wishlist.push(productId);
   }
-
   await user.save();
 
   res.json({ message: "Wishlist updated" });

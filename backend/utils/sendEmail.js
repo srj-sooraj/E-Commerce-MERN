@@ -16,6 +16,8 @@ const sendEmail = async (to, subject, text) => {
     subject,
     text,
   });
+  console.log(text);
+  
   
 };
 

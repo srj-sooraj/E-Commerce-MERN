@@ -83,118 +83,176 @@ const ProductDetails = () => {
 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 mt-12 relative z-10 grid lg:grid-cols-2 gap-12 items-start">
 
-        {/* Images Section */}
+        {/* Images Section (Flipkart Style Sticky Left) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col-reverse sm:flex-row gap-6 lg:sticky lg:top-32"
+          className="lg:col-span-2 flex flex-col md:flex-row gap-6 sticky top-[120px] h-fit"
         >
-          {/* Thumbnails */}
-          <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-auto w-full sm:w-24 custom-scrollbar snap-x pb-2 sm:pb-0 sm:max-h-[500px]">
+          {/* Thumbnails (Vertical on desktop) */}
+          <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto w-full md:w-24 custom-scrollbar snap-x pb-2 md:pb-0 md:max-h-[600px] shrink-0">
             {images.map((img, index) => (
               <div
                 key={index}
+                onMouseEnter={() => setSelectedImage(`http://localhost:3000/${img}`)}
                 onClick={() => setSelectedImage(`http://localhost:3000/${img}`)}
-                className={`snap-center shrink-0 w-20 h-20 sm:w-20 sm:h-20 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${selectedImage === `http://localhost:3000/${img}` ? "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "border-slate-800 hover:border-slate-600"}`}
+                className={`snap-center shrink-0 w-20 h-20 md:w-20 md:h-20 bg-slate-900 rounded-xl overflow-hidden cursor-pointer border-2 transition-all p-1 ${selectedImage === `http://localhost:3000/${img}` ? "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] bg-slate-800" : "border-slate-800 hover:border-slate-600"}`}
               >
                 <img
                   src={`http://localhost:3000/${img}`}
                   alt="Thumbnail"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain mix-blend-screen"
                 />
               </div>
             ))}
           </div>
 
           {/* Main Image */}
-          <div className="relative flex-1 rounded-[2rem] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl group flex items-center justify-center min-h-[300px] sm:min-h-[500px]">
+          <div className="relative flex-1 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl group flex flex-col items-center justify-center min-h-[400px] sm:min-h-[500px] md:h-[600px] p-6 backdrop-blur-md">
             <img
               src={selectedImage || `http://localhost:3000/${images[0]}`}
               alt={product.name}
-              className="w-full object-contain max-h-[500px] hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-contain max-h-[500px] group-hover:scale-110 transition-transform duration-700 ease-in-out cursor-crosshair drop-shadow-2xl"
             />
           </div>
         </motion.div>
 
-        {/* Product Details Section */}
+        {/* Product Details Section (Flipkart Right Column) */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col"
+          className="flex flex-col lg:col-span-3 text-slate-300"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 border border-emerald-500/20 text-emerald-400 w-fit mb-4">
-            <Tag size={14} />
-            <span className="text-xs font-semibold uppercase tracking-wider">{product.category}</span>
-          </div>
+          <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{product.category}</div>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-white mb-3">
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full text-sm font-bold border border-yellow-500/20">
-              <Star size={16} className="fill-yellow-500" />
-              {product.rating} <span className="text-yellow-500/70 font-medium">/ 5</span>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-1 bg-emerald-600 text-white px-2 py-0.5 rounded text-sm font-bold shadow-sm">
+              {Number(product.rating || 0).toFixed(1)} <Star size={14} className="fill-white" />
             </div>
-            <p className="text-slate-400 text-sm hover:text-white transition-colors cursor-pointer border-b border-slate-700 hover:border-slate-400 pb-0.5">
-              Read {product.numReviews} Reviews
+            <p className="text-slate-400 text-sm font-medium">
+              {product.numReviews} Ratings & Reviews
+            </p>
+            <div className="w-1 h-1 bg-slate-600 rounded-full" />
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png" alt="assured" className="h-5 filter invert opacity-80" />
+          </div>
+
+          <div className="text-emerald-400 font-black text-xs uppercase tracking-wider mb-1 mt-2">Special Price</div>
+          <div className="flex items-end gap-3 mb-6 border-b border-slate-800/50 pb-6">
+            <p className="text-4xl font-black text-white tracking-tight">
+              ₹{product.price.toLocaleString()}
+            </p>
+            <p className="text-xl text-slate-500 line-through font-medium mb-1">
+              ₹{(product.price * 1.4).toFixed(0).toLocaleString()}
+            </p>
+            <p className="text-emerald-500 font-bold mb-1">28% off</p>
+          </div>
+
+          {/* Offers Section */}
+          <div className="mb-6">
+            <h4 className="font-bold text-white mb-3">Available Offers</h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2">
+                <Tag size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                <span><span className="font-bold text-white">Bank Offer</span> 10% off on HDFC Bank Credit Card EMI Transactions, up to ₹1,500 on orders of ₹5,000 and above <span className="text-cyan-400 font-semibold cursor-pointer">T&C</span></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Tag size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                <span><span className="font-bold text-white">Bank Offer</span> 5% Cashback on ShopX Axis Bank Card <span className="text-cyan-400 font-semibold cursor-pointer">T&C</span></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Tag size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                <span><span className="font-bold text-white">Special Price</span> Get extra 10% off (price inclusive of cashback/coupon) <span className="text-cyan-400 font-semibold cursor-pointer">T&C</span></span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Highlights & Delivery */}
+          <div className="grid sm:grid-cols-2 gap-8 mb-8 border-t border-slate-800/50 pt-8">
+            <div>
+              <div className="flex items-center gap-2 text-slate-400 font-semibold mb-2 uppercase text-xs tracking-wider">
+                <Package size={14} className="text-cyan-400" /> Delivery
+              </div>
+              <p className="text-white font-medium mb-1 border-b border-white/10 pb-2 w-fit">Delivery by {new Date(Date.now() + 86400000 * 3).toLocaleDateString()} | <span className="text-emerald-400 font-bold">Free <span className="text-slate-500 line-through text-xs font-normal">₹40</span></span></p>
+              <p className="text-xs text-slate-400">Order within 2hrs 30mins. Details</p>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 text-slate-400 font-semibold mb-2 uppercase text-xs tracking-wider">
+                <CheckCircle2 size={14} className="text-emerald-400" /> Highlights
+              </div>
+              <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+                <li>Premium Quality Manufacturer</li>
+                <li>7 Days Replacement Policy</li>
+                <li>Cash on Delivery available</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="mb-6 border border-slate-800 rounded-xl p-6 bg-slate-900/30 shadow-inner">
+            <h4 className="font-bold text-white mb-3 text-sm uppercase tracking-wider border-b border-slate-800/50 pb-2">Product Description</h4>
+            <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-wrap">
+              {product.description}
             </p>
           </div>
 
-          <p className="text-4xl font-extrabold text-emerald-400 mt-8 tracking-tight drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-            ₹{product.price}
-          </p>
-
-          <p className="text-slate-400 mt-6 text-lg leading-relaxed border-t border-slate-800/50 pt-6">
-            {product.description}
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 border-t border-b border-slate-800/50 py-6">
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-semibold text-slate-400">Quantity</span>
-              <div className="flex items-center bg-slate-900 border border-slate-700 rounded-xl overflow-hidden p-1 shadow-inner h-[52px]">
-                <button
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-800 text-white hover:bg-slate-700 font-bold"
-                >-</button>
-                <input
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  value={qty}
-                  onChange={(e) => setQty(Number(e.target.value))}
-                  className="w-12 text-center bg-transparent border-none focus:outline-none focus:ring-0 text-white font-bold h-full appearance-none m-0"
-                  style={{ MozAppearance: 'textfield' }}
-                />
-                <button
-                  onClick={() => setQty(Math.min(product.stock, qty + 1))}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-800 text-white hover:bg-slate-700 font-bold"
-                >+</button>
-              </div>
+          {/* Buy Section */}
+          <div className="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 sticky bottom-4 backdrop-blur-xl shadow-2xl z-20">
+            <div className="flex items-center bg-slate-950 border border-slate-700 rounded-xl overflow-hidden p-1 shadow-inner h-[56px] shrink-0">
+              <button
+                onClick={() => setQty(Math.max(1, qty - 1))}
+                className="w-12 h-12 flex items-center justify-center rounded-lg bg-slate-800 text-white hover:bg-slate-700 font-bold"
+              >-</button>
+              <input
+                type="number"
+                min="1"
+                max={product.stock}
+                value={qty}
+                onChange={(e) => setQty(Number(e.target.value))}
+                className="w-16 text-center bg-transparent border-none focus:outline-none focus:ring-0 text-white font-bold h-full appearance-none m-0 text-lg"
+                style={{ MozAppearance: 'textfield' }}
+              />
+              <button
+                onClick={() => setQty(Math.min(product.stock, qty + 1))}
+                className="w-12 h-12 flex items-center justify-center rounded-lg bg-slate-800 text-white hover:bg-slate-700 font-bold"
+              >+</button>
             </div>
 
-            <div className="flex-1 w-full pt-6 sm:pt-0">
-              <motion.button
-                whileHover={{ scale: product.stock > 0 ? 1.02 : 1 }}
-                whileTap={{ scale: product.stock > 0 ? 0.98 : 1 }}
-                onClick={addToCart}
-                disabled={product.stock === 0}
-                className={`w-full h-[52px] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${product.stock > 0
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] text-slate-950 mt-7 sm:mt-7"
-                    : "bg-slate-800 text-slate-500 cursor-not-allowed mt-7 sm:mt-7"
-                  }`}
-              >
-                <ShoppingCart size={20} />
-                {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-              </motion.button>
-            </div>
+            <motion.button
+              whileHover={{ scale: product.stock > 0 ? 1.02 : 1 }}
+              whileTap={{ scale: product.stock > 0 ? 0.98 : 1 }}
+              onClick={addToCart}
+              disabled={product.stock === 0}
+              className={`flex-1 h-[56px] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${product.stock > 0
+                ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-slate-950 text-lg shadow-[0_4px_15px_rgba(245,158,11,0.3)]"
+                : "bg-slate-800 text-slate-500 cursor-not-allowed text-lg"
+                }`}
+            >
+              <ShoppingCart size={22} className={product.stock > 0 ? "fill-slate-950" : ""} />
+              {product.stock > 0 ? "ADD TO CART" : "OUT OF STOCK"}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: product.stock > 0 ? 1.02 : 1 }}
+              whileTap={{ scale: product.stock > 0 ? 0.98 : 1 }}
+              disabled={product.stock === 0}
+              className={`flex-1 h-[56px] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${product.stock > 0
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 text-lg shadow-[0_4px_15px_rgba(16,185,129,0.3)]"
+                : "bg-slate-800 text-slate-500 cursor-not-allowed text-lg hidden"
+                }`}
+            >
+              <Send size={20} />
+              BUY NOW
+            </motion.button>
           </div>
 
-          <div className="mt-6 flex items-center gap-6">
-            <div className={`flex items-center gap-2 text-sm font-medium ${product.stock > 0 ? "text-emerald-400" : "text-red-400"}`}>
-              {product.stock > 0 ? <CheckCircle2 size={18} /> : <Package size={18} />}
-              {product.stock > 0 ? "In Stock & Ready to Ship" : "Currently Unavailable"}
-            </div>
+          <div className="mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-slate-500">
+            {product.stock > 0 ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
+            Status: {product.stock > 0 ? <span className="text-emerald-400">In Stock ({product.stock} units)</span> : <span className="text-red-400">Sold Out</span>}
           </div>
         </motion.div>
       </div>

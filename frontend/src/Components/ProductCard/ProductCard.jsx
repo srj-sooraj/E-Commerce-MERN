@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
   const [wishlisted, setWishlisted] = useState(false);
   const navigate = useNavigate();
 
-  // Check if product already exists in cart
+  //Check if product already exists in cart
   const checkCart = async () => {
     try {
       const res = await API.get("/cart");
@@ -68,7 +68,7 @@ const ProductCard = ({ product }) => {
       <div className="relative overflow-hidden aspect-[4/3] bg-slate-800">
         <img
           onClick={() => navigate(`/product/${product._id}`)}
-          src={`http://localhost:3000/${product.images?.[0] || product.image}`}
+          src={`http://localhost:3000/${product.images?.[0] }`}
           alt={product.name}
           className="w-full h-full object-cover cursor-pointer transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
         />

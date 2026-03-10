@@ -7,7 +7,7 @@ import { Search, SlidersHorizontal, ChevronRight, Package } from "lucide-react";
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1); // total pages
+  const [pages, setPages] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("");

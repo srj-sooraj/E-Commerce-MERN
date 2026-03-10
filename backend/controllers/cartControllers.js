@@ -1,10 +1,13 @@
 import Product from "../models/product.js";
 import Cart from "../models/cart.js";
-// ADD TO CART
+
+
+
+///// ADD TO CARt
+
 export const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -41,7 +44,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// GET CART
+/// Get cart
 export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id })
@@ -108,7 +111,6 @@ export const getCart = async (req, res) => {
   export const updateCartItem = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-
     let cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {
@@ -169,7 +171,6 @@ export const getCart = async (req, res) => {
 export const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.params;
-
     let cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {

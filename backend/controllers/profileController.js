@@ -8,11 +8,12 @@ export const getCurrentUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const user = await User.findById(req.user._id);
 
+
   user.name = req.body.name || user.name;
   user.email = req.body.email || user.email;
-  user.phone = req.body.phone || user.phone;   // ✅ ADD
+  user.phone = req.body.phone || user.phone;  
 
-  // ✅ Address update
+  // 
   // user.address = {
   //   house: req.body.house || user.address?.house,
   //   street: req.body.street || user.address?.street,
@@ -26,7 +27,6 @@ export const updateUser = async (req, res) => {
   }
 
   await user.save();
-
   res.json({
     message: "Profile updated",
     user,
@@ -37,6 +37,7 @@ export const updateUser = async (req, res) => {
 export const addAddress = async (req, res) => {
   const user = await User.findById(req.user._id);
 
+
   const newAddress = {
     house: req.body.house,
     street: req.body.street,
@@ -46,7 +47,7 @@ export const addAddress = async (req, res) => {
     isDefault: req.body.isDefault || false,
   };
 
-  // if setting default → remove previous default
+  
   if (newAddress.isDefault) {
     user.addresses.forEach(addr => addr.isDefault = false);
   }
@@ -60,7 +61,6 @@ export const addAddress = async (req, res) => {
 
 export const deleteAddress = async (req, res) => {
   const user = await User.findById(req.user._id);
-
   user.addresses = user.addresses.filter(
     addr => addr._id.toString() !== req.params.id
   );
@@ -73,7 +73,6 @@ export const deleteAddress = async (req, res) => {
 
 export const setDefaultAddress = async (req, res) => {
   const user = await User.findById(req.user._id);
-
   user.addresses.forEach(addr => {
     addr.isDefault = addr._id.toString() === req.params.id;
   });
